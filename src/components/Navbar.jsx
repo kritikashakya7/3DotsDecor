@@ -5,7 +5,7 @@ import { Menu, ShoppingCart, User } from "lucide-react";
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   return (
-    <div className="bg-white shadow-md">
+    <div className="bg-white shadow-md md-10">
       <div className="flex justify-between p-4 container m-auto w-full">
         <div className="flex gap-5 items-center">
           <Brand />

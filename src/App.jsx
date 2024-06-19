@@ -4,6 +4,7 @@ import { Home } from "./pages/Home";
 import { Aboutus } from "./pages/Aboutus";
 import Customize from "./pages/Customize";
 import Shop from "./pages/Shop";
+import Signup from "./pages/Signup";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
             <Route path="aboutus" element={<Aboutus />} />
             <Route path="Customize" element={<Customize />} />
             <Route path="shop" element={<Shop />} />
+            <Route path="signup" element={<Signup />} />
           </Route>
         </Routes>
       </BrowserRouter>
