@@ -1,11 +1,18 @@
 import { ShoppingCart } from "lucide-react";
-import React from "react";
+import useAuthContext from "../hooks/useAuthContext";
+import { useNavigate } from "react-router-dom";
 
-const CartIcon = () => {
+const CartIcon = ({ onAddtoCart }) => {
+  const { user } = useAuthContext();
+  const navigate = useNavigate();
+
   return (
-    <div className="border border-primary rounded-full p-1.5 ">
-      <ShoppingCart className="text-primary size-4" />
-    </div>
+    <button
+      onClick={user ? onAddtoCart : () => navigate("/login")}
+      className="border border-primary rounded-full p-1.5 hover:bg-primary hover:text-white text-primary animation"
+    >
+      <ShoppingCart className="size-4" />
+    </button>
   );
 };
 

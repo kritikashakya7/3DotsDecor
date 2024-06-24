@@ -1,4 +1,3 @@
-import React from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -7,7 +6,7 @@ const Layout = () => {
   return (
     <>
       <Navbar />
-      <div>
+      <div className="min-h-[calc(100vh-462px)]">
         <Outlet />
       </div>
       <Footer />

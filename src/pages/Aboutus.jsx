@@ -1,7 +1,9 @@
-import React from 'react'
+import React from "react";
 
 export const Aboutus = () => {
   return (
-    <div>Aboutus</div>
-  )
-}
+    <div className="container px-5 py-14">
+      <h1 className="text-xl font-bold">About Us</h1>
+    </div>
+  );
+};

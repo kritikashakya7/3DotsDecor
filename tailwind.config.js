@@ -8,6 +8,15 @@ export default {
         hover: "#f6f6f6",
         secondary: "#222831",
       },
+      keyframes: {
+        "slide-down": {
+          "0%": { height: "0" },
+          "100%": { height: "100%" },
+        },
+      },
+      animation: {
+        "slide-down": "slide-down 0.5s ease-out",
+      },
     },
   },
   plugins: [],
