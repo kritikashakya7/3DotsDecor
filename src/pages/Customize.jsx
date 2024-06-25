@@ -3,7 +3,7 @@ import curtain from "../assets/curtains.svg";
 import Button from "../components/Button";
 
 const Customize = () => {
-  const [curtainColor, setCurtainColor] = useState("");
+  const [selectedImage, setSelectedImage] = useState("");
   const [wallColor, setwallColor] = useState("");
   return (
     <div className="container px-5 py-14 min-height space-y-3">
@@ -34,7 +34,8 @@ const Customize = () => {
           />
           {wallColor}
         </div>
-        <div className="shadow flex items-center gap-2 max-w-[350px] justify-center p-2 rounded">
+
+        {/* <div className="shadow flex items-center gap-2 max-w-[350px] justify-center p-2 rounded">
           <p className="text-sm">Select Curtain Color:</p>
           <input
             type="color"
@@ -43,16 +44,80 @@ const Customize = () => {
             onChange={(e) => setCurtainColor(e.target.value)}
           />
           {curtainColor}
-        </div>
+        </div> */}
       </div>
-
-      <div
-        className="max-w-[600px] h-[600px] flex items-start justify-center m-auto"
-        style={{
-          backgroundColor: wallColor,
-        }}
-      >
-        <svg
+      <div className="flex">
+        <div className="flex-1 space-y-3">
+          <h1 className="font-bold">Choose Your Option</h1>
+          {/* Images */}
+          <ul className=" flex  gap-2  flex-wrap ">
+            <li
+              className={`flex   p-0.5 rounded ${
+                selectedImage ===
+                "https://m.media-amazon.com/images/I/61nBFYivYNL._SX300_SY300_QL70_FMwebp_.jpg"
+                  ? "p-0.5 border-2 rounded border-primary"
+                  : "border-2 border-transparent"
+              }`}
+            >
+              <button
+                className="size-28 rounded"
+                onClick={() => setSelectedImage("/c1.png")}
+              >
+                <img
+                  className="rounded size-full max-w-full max-h-full object-cover"
+                  src="/c1.png"
+                />
+              </button>
+            </li>
+            <li
+              className={`flex   p-0.5 rounded ${
+                selectedImage ===
+                "https://m.media-amazon.com/images/I/61CPkHQtr5L._SY879_.jpg"
+                  ? "p-0.5 border-2 rounded border-primary"
+                  : "border-2 border-transparent"
+              }`}
+            >
+              <button
+                className="size-28 rounded"
+                onClick={() => setSelectedImage("/c2.png")}
+              >
+                <img
+                  className="rounded size-full max-w-full max-h-full object-cover"
+                  src="/c2.png"
+                />
+              </button>
+            </li>
+            <li
+              className={`flex   p-0.5 rounded ${
+                selectedImage ===
+                "https://m.media-amazon.com/images/I/91ysdt4QetL._SY879_.jpg"
+                  ? "p-0.5 border-2 rounded border-primary"
+                  : "border-2 border-transparent"
+              }`}
+            >
+              <button
+                className="size-28 rounded"
+                onClick={() =>
+                  setSelectedImage(
+                    "https://m.media-amazon.com/images/I/91ysdt4QetL._SY879_.jpg"
+                  )
+                }
+              >
+                <img
+                  className="rounded size-full max-w-full max-h-full object-cover"
+                  src="https://m.media-amazon.com/images/I/91ysdt4QetL._SY879_.jpg"
+                />
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div
+          className=" h-[600px] flex justify-center w-[70%] border rounded border-black"
+          style={{
+            backgroundColor: wallColor,
+          }}
+        >
+          {/* <svg
           fill={curtainColor}
           version="1.1"
           id="Capa_1"
@@ -76,9 +141,10 @@ const Customize = () => {
               <path d="M232.697,58.62c-23.309,9.516-52.569,15.401-79.191,16.018c-0.004,0.112-0.018,0.221-0.018,0.334 c0,1.141,0.091,28.271,7.972,55.854c10.444,36.552,28.114,51.906,44.961,57.494h84.524l-8.617-164.302h4.871 c5.413,0,9.802-4.389,9.802-9.802s-4.389-9.802-9.802-9.802H9.802C4.389,4.415,0,8.804,0,14.217s4.389,9.802,9.802,9.802h4.872 L6.057,188.321h84.524c16.846-5.588,34.516-20.942,44.96-57.494c7.881-27.583,7.972-54.713,7.972-55.854 c0-0.118-0.015-0.232-0.019-0.349c-26.406-0.716-55.316-6.583-78.39-16.003c-23.279-9.506-38.085-21.549-42.876-34.602h15.39 c5.316,7.636,16.717,15.382,32.673,21.897c23.099,9.432,52.486,15.062,78.609,15.062s55.51-5.63,78.609-15.062 c15.956-6.515,27.357-14.26,32.673-21.897h15.39C270.782,37.072,255.976,49.115,232.697,58.62z"></path>{" "}
             </g>{" "}
           </g>
-        </svg>
+        </svg> */}
+          <img src={selectedImage} />
+        </div>
       </div>
-
       <div className="flex justify-end">
         <Button>Add To Cart</Button>
       </div>
