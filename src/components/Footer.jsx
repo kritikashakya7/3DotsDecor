@@ -28,7 +28,7 @@ function Footer() {
             <li className="font-bold">9861740000</li>
             <li>Email:</li>
             <li className="font-bold break-words">
-              gaurang.kansakar@apexcollege.edu.np
+              3dotsdec@gmail.com
             </li>
           </ul>
         </div>

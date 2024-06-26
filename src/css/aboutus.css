@@ -1,0 +1,33 @@
+.aboutus-container {
+  padding: 20px;
+}
+
+.header-container {
+  margin-bottom: 20px;
+}
+
+.content-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.column {
+  flex: 1;
+  padding: 10px;
+}
+
+.aboutus-image {
+  width: 100%;
+  max-width: 400px; 
+  height: auto; 
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3); 
+}
+
+.text-justify {
+  text-align: justify;
+  line-height: 1.6;
+}
+
+
+
+

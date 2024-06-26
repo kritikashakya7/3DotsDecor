@@ -17,7 +17,7 @@ const Cart = () => {
 
   return (
     <div className="container w-full m-auto px-5 py-14 space-y-5">
-      <h1 className="text-xl font-semibold">Cart</h1>
+      <h1 className="text-xl font-semibold"></h1>
 
       <div className="flex gap-5 flex-col lg:flex-row">
         <div className="w-full lg:max-w-[800px]">
