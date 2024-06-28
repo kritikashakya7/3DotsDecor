@@ -1,7 +1,20 @@
 import "../css/Signup.css";
 import Button from "../components/Button";
+import { useAuth } from "../hooks/useAuth";
+import { useState } from "react";
 
 const Signup = () => {
+  const { signup } = useAuth();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const onSubmit = async () => {
+    const response = await signup({ firstName, lastName, email, password });
+    if (response.succes) {
+      console.log("Account Created");
+    }
+  };
   return (
     <div className="flex">
       <div className="login-container">
@@ -10,20 +23,42 @@ const Signup = () => {
         </div>
         <div className="inputs">
           <div className="input">
-            <input type="text" placeholder="First Name" />
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="First Name"
+            />
           </div>
           <div className="input">
-            <input type="text" placeholder="Last Name" />
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Last Name"
+            />
           </div>
           <div className="input">
-            <input type="email" placeholder="Email" />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+            />
           </div>
           <div className="input">
-            <input type="password" placeholder="Password" />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+            />
           </div>
         </div>
         <div className="submit-container">
-          <Button className="w-full">Sign up</Button>
+          <Button className="w-full" onClick={onSubmit}>
+            Sign up
+          </Button>
         </div>
         <div className="text-login">
           Already have an account? <a href="/login">Log In</a>
