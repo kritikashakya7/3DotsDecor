@@ -3,7 +3,6 @@ import { API_BASE_URL } from "../lib/constants";
 
 export const useAuth = () => {
   const signup = async ({ firstName, lastName, email, password }) => {
-    // console.log(firstName, lastName, email, password);
     try {
       const response = await axios.post(`${API_BASE_URL}/auth/signup`, {
         firstName,
@@ -14,9 +13,22 @@ export const useAuth = () => {
       const data = response.data;
       return { data, succes: true };
     } catch (error) {
-      console.log(error);
-      return { succes: false };
+      return { succes: false, error: error.response.data };
     }
   };
-  return { signup };
+
+  const login = async ({ email, password }) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+        email,
+        password,
+      });
+      const data = response.data;
+      return { data, succes: true };
+    } catch (error) {
+      return { succes: false, error: error.response.data };
+    }
+  };
+
+  return { signup, login };
 };

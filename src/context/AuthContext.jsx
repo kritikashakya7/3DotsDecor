@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import LoadingScreen from "../components/LoadingScreen";
+import { decodeToken } from "../lib/decodeToken";
 
 export const AuthContext = createContext();
 
@@ -10,23 +11,20 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (token) setUser(token);
-
-    setUser({
-      id: 1,
-    });
+    if (token) setUser(JSON.parse(token));
 
     setIsLoading(false);
   }, []);
 
-  const login = () => {
-    setUser({
-      id: 1,
-    });
+  const loginUser = (token) => {
+    const decodedToken = decodeToken(token);
+    localStorage.setItem("token", JSON.stringify(decodedToken));
+    setUser(decodedToken);
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.setItem("token", null);
   };
 
   if (isLoading) {
@@ -38,7 +36,7 @@ export const AuthContextProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, loginUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

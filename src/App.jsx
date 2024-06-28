@@ -12,7 +12,7 @@ import Profile from "./pages/Profile";
 import Product from "./pages/Product";
 
 function App() {
-  const { user } = useAuthContext();
+  const { user, isLoading } = useAuthContext();
   return (
     <>
       <BrowserRouter>
@@ -23,16 +23,19 @@ function App() {
             <Route path="Customize" element={<Customize />} />
             <Route path="shop" element={<Shop />} />
             <Route path="product/:id" element={<Product />} />
-            <Route
-              path="cart"
-              element={user ? <Cart /> : <Navigate to={<Login />} />}
-            />
+            <Route path="cart" element={<Cart />} />
             <Route
               path="profile"
-              element={user ? <Profile /> : <Navigate to={<Login />} />}
+              element={user ? <Profile /> : <Navigate to="/login" />}
             />
-            <Route path="signup" element={<Signup />} />
-            <Route path="login" element={<Login />} />
+            <Route
+              path="signup"
+              element={!user && !isLoading ? <Signup /> : <Navigate to="/" />}
+            />
+            <Route
+              path="login"
+              element={!user && !isLoading ? <Login /> : <Navigate to="/" />}
+            />
           </Route>
         </Routes>
       </BrowserRouter>

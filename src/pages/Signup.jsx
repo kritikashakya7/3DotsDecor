@@ -2,6 +2,7 @@ import "../css/Signup.css";
 import Button from "../components/Button";
 import { useAuth } from "../hooks/useAuth";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const Signup = () => {
   const { signup } = useAuth();
@@ -9,10 +10,28 @@ const Signup = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const reset = () => {
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setPassword("");
+  };
+
   const onSubmit = async () => {
     const response = await signup({ firstName, lastName, email, password });
+
     if (response.succes) {
-      console.log("Account Created");
+      toast.success(response.data);
+      reset();
+    } else {
+      const errors = response.error?.errors || response.error;
+
+      if (errors) {
+        Object.values(errors).forEach((error) => {
+          toast.error(`${error.message || error}`);
+        });
+      }
     }
   };
   return (

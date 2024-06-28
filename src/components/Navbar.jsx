@@ -47,7 +47,7 @@ const Navbar = () => {
 
         <div className="sm:flex gap-5 items-center hidden ">
           <Link
-            to={user ? "/cart" : "/login"}
+            to={"/cart"}
             className="flex gap-2 items-center p-2 rounded hover:bg-hover cursor-pointer animation"
           >
             <ShoppingCart />
