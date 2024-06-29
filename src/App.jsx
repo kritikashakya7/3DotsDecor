@@ -10,6 +10,13 @@ import Cart from "./pages/Cart";
 import useAuthContext from "./hooks/useAuthContext";
 import Profile from "./pages/Profile";
 import Product from "./pages/Product";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminLayout from "./components/AdminLayout";
+import Category from "./pages/admin/Category";
+import Customer from "./pages/admin/Customer";
+import Order from "./pages/admin/Order";
+import Products from "./pages/admin/Products";
+import Dashboard from "./pages/admin/Dashboard";
 
 function App() {
   const { user, isLoading } = useAuthContext();
@@ -36,6 +43,13 @@ function App() {
               path="login"
               element={!user && !isLoading ? <Login /> : <Navigate to="/" />}
             />
+          </Route>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="category" element={<Category />} />
+            <Route path="customer" element={<Customer />} />
+            <Route path="order" element={<Order />} />
+            <Route path="products" element={<Products />} />
           </Route>
         </Routes>
       </BrowserRouter>
