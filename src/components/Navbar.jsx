@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Brand from "./Brand";
 import { Menu, ShoppingCart, User, X } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -8,7 +8,7 @@ import useCartContext from "../hooks/useCartContext";
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { user } = useAuthContext();
-  const { cart } = useCartContext();
+  const { cartItems } = useCartContext();
 
   return (
     <div className="bg-white shadow-md md-10 sticky top-0 z-50">
@@ -51,7 +51,7 @@ const Navbar = () => {
             className="flex gap-2 items-center p-2 rounded hover:bg-hover cursor-pointer animation"
           >
             <ShoppingCart />
-            <p className="text-sm">Cart ({cart.length})</p>
+            <p className="text-sm">Cart ({cartItems})</p>
           </Link>
           <Link
             to={user ? "/profile" : "/login"}
@@ -101,7 +101,7 @@ const Navbar = () => {
                 className="flex gap-2 items-center justify-center p-5 rounded hover:bg-hover cursor-pointer animation text-center"
               >
                 <ShoppingCart />
-                <p className="text-sm">Cart ({cart.length})</p>
+                <p className="text-sm">Cart ({cartItems})</p>
               </Link>
             </li>
             <li>

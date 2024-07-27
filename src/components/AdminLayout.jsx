@@ -18,11 +18,11 @@ const AdminLayout = () => {
     <div className="flex">
       <Sidebar />
       <div className="w-full">
-        <div className="sticky top-0 w-full shadow bg-white admin-container flex justify-between items-center text-xl">
+        <div className="sticky top-0 w-full shadow bg-white admin-container flex justify-between items-center text-xl max-md:text-base">
           <h1 className="font-bold">Welcome, Gaurang!</h1>
           <p className="font-bold">{format(time, "hh:mm a")}</p>
         </div>
-        <div className="admin-container h-[calc(100vh-68px)]">
+        <div className="admin-container h-[calc(100vh-68px)] overflow-y-auto">
           <Outlet />
         </div>
       </div>

@@ -26,6 +26,11 @@ const userSchema = new Schema({
     type: String,
     required: [true, "Password is required"],
   },
+  role: {
+    type: String,
+    default: "customer",
+    required: [true, "Role is required."],
+  },
 });
 
 const User = mongoose.model("User", userSchema);

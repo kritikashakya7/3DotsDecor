@@ -32,6 +32,11 @@ const productSchema = new Schema({
     type: Number,
     required: [true, "Stock is required."],
   },
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    required: [true, "Category is required."],
+  },
 });
 
 const Product = mongoose.model("Product", productSchema);

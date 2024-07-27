@@ -1,20 +1,37 @@
 import { useEffect, useState } from "react";
 import LoadingScreen from "../components/LoadingScreen";
 import NotFound from "../components/NotFound";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Minus, Plus } from "lucide-react";
 import Button from "../components/Button";
+import useAdmin from "../hooks/useAdmin";
+import useAuthContext from "../hooks/useAuthContext";
+import toast from "react-hot-toast";
+import useCart from "../hooks/useCart";
+import useCartContext from "../hooks/useCartContext";
 
 const Product = () => {
+  const { user } = useAuthContext();
+  const { addToCart } = useCart();
+  const { updateCartItems } = useCartContext();
+  const navigate = useNavigate();
+  const { getProductById } = useAdmin();
   const [productInfo, setProductInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const [addQuantity, setAddQuantity] = useState(1);
-  const [selectedImage, setSelectedImage] = useState(
-    "https://m.media-amazon.com/images/I/61nBFYivYNL._SX300_SY300_QL70_FMwebp_.jpg"
-  );
 
   const { id } = useParams();
+
+  const fetchProductInfo = async () => {
+    const response = await getProductById(id);
+
+    if (response.success) {
+      setProductInfo(response.data);
+    }
+
+    setIsLoading(false);
+  };
 
   const handleQuantityChange = ({ type }) => {
     if (type === "increase") {
@@ -24,109 +41,72 @@ const Product = () => {
     }
   };
 
+  const onAddToCart = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    const products = [
+      {
+        product: productInfo._id,
+        quantity: addQuantity,
+        itemTotal: productInfo.price * addQuantity,
+      },
+    ];
+
+    const response = await addToCart({ id: user.id, products });
+
+    if (response.success) {
+      toast.success(response?.data.message);
+      updateCartItems();
+    } else {
+      toast.error(response.message);
+    }
+  };
+
+  const onBuyNow = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+  };
+
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
-  }, []);
+    fetchProductInfo();
+  }, [id]);
 
-  // if (isLoading) return <LoadingScreen />;
+  if (isLoading) return <LoadingScreen />;
 
-  // if ((!isLoading && !productInfo) || !id || id === undefined)
-  //   return <NotFound />;
+  if ((!isLoading && !productInfo) || !id || id === undefined)
+    return <NotFound />;
 
   return (
     <div className="container px-5 py-14 min-height">
       <div className="flex gap-8 flex-col lg:flex-row">
-        {/* Images */}
-        <ul className="lg:space-y-5 flex items-center gap-2 lg:flex-col flex-wrap justify-center">
-          <li
-            className={`flex items-center justify-center p-0.5 rounded ${
-              selectedImage ===
-              "https://m.media-amazon.com/images/I/61nBFYivYNL._SX300_SY300_QL70_FMwebp_.jpg"
-                ? "p-0.5 border-2 rounded border-primary"
-                : "border-2 border-transparent"
-            }`}
-          >
-            <button
-              className="size-28 rounded"
-              onClick={() =>
-                setSelectedImage(
-                  "https://m.media-amazon.com/images/I/61nBFYivYNL._SX300_SY300_QL70_FMwebp_.jpg"
-                )
-              }
-            >
-              <img
-                className="rounded size-full max-w-full max-h-full object-cover"
-                src="https://m.media-amazon.com/images/I/61nBFYivYNL._SX300_SY300_QL70_FMwebp_.jpg"
-              />
-            </button>
-          </li>
-          <li
-            className={`flex items-center justify-center p-0.5 rounded ${
-              selectedImage ===
-              "https://m.media-amazon.com/images/I/61CPkHQtr5L._SY879_.jpg"
-                ? "p-0.5 border-2 rounded border-primary"
-                : "border-2 border-transparent"
-            }`}
-          >
-            <button
-              className="size-28 rounded"
-              onClick={() =>
-                setSelectedImage(
-                  "https://m.media-amazon.com/images/I/61CPkHQtr5L._SY879_.jpg"
-                )
-              }
-            >
-              <img
-                className="rounded size-full max-w-full max-h-full object-cover"
-                src="https://m.media-amazon.com/images/I/61CPkHQtr5L._SY879_.jpg"
-              />
-            </button>
-          </li>
-          <li
-            className={`flex items-center justify-center p-0.5 rounded ${
-              selectedImage ===
-              "https://m.media-amazon.com/images/I/91ysdt4QetL._SY879_.jpg"
-                ? "p-0.5 border-2 rounded border-primary"
-                : "border-2 border-transparent"
-            }`}
-          >
-            <button
-              className="size-28 rounded"
-              onClick={() =>
-                setSelectedImage(
-                  "https://m.media-amazon.com/images/I/91ysdt4QetL._SY879_.jpg"
-                )
-              }
-            >
-              <img
-                className="rounded size-full max-w-full max-h-full object-cover"
-                src="https://m.media-amazon.com/images/I/91ysdt4QetL._SY879_.jpg"
-              />
-            </button>
-          </li>
-        </ul>
-
-        {/* Selected Image */}
         <div className="rounded flex items-center justify-center lg:min-w-[500px] min-h-[500px] overflow-x-auto">
           <img
-            className="max-h-[500px] max-w-[500px] rounded object-contain"
-            src={selectedImage}
+            className="size-96 aspect-square rounded-md"
+            src={productInfo.thumbnail}
           />
         </div>
-
         {/* Product Information */}
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-1 flex-col gap-8">
           <div className="space-y-2">
-            <h1 className="text-xl font-bold mb-5">Product Title</h1>
+            <h1 className="text-xl font-bold mb-5">{productInfo.title}</h1>
 
             <div className="flex justify-between">
               <h2 className="text-xl font-semibold flex items-center gap-4">
-                Price: <span className="text-primary">Rs 5,000</span>
+                Price:{" "}
+                <span className="text-primary">
+                  Rs {Number(productInfo.price).toLocaleString()}
+                </span>
               </h2>
-              <p className="text-green-500">In Stock</p>
-              {/* <p className="text-red-500">Out of Stock</p> */}
+              {Number(productInfo.stock) > 0 ? (
+                <p className="text-green-500">In Stock</p>
+              ) : (
+                <p className="text-red-500">Out of Stock</p>
+              )}
             </div>
 
             <div className="flex items-center gap-4">
@@ -149,17 +129,18 @@ const Product = () => {
             </div>
           </div>
 
-          <Button>Add to Cart</Button>
+          <div className="w-full flex items-center gap-4">
+            <Button className="flex-1" onClick={onAddToCart}>
+              Add to Cart
+            </Button>
+            <Button className="flex-1" onClick={onBuyNow}>
+              Buy Now
+            </Button>
+          </div>
 
           <div className="space-y-5">
             <h1 className="text-lg font-semibold">Description</h1>
-            <p className="text-sm">
-              Material: Polyester, Transparency: Semi - Transparent, Product
-              Quality: 150 GSM Color: Brown, Size: Window - 5 feet Package
-              Contents: 2 Window Curtains Dimension of Each Curtain: Width 46
-              inches X Length 60 inches (116CM X 152CM) Normal Hand Wash or
-              Machine Wash
-            </p>
+            <p className="text-sm">{productInfo.description}</p>
           </div>
         </div>
       </div>

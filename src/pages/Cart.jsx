@@ -1,19 +1,63 @@
-import useCartContext from "../hooks/useCartContext";
+import { useEffect, useState } from "react";
+import useAuthContext from "../hooks/useAuthContext";
+import useCart from "../hooks/useCart";
 import { Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import useCartContext from "../hooks/useCartContext";
 
 const Cart = () => {
-  const { cart, cartTotal, updateCartQuantity, removeFromCart } =
-    useCartContext();
+  const { getCartItems, updateCartItem, removeCartItem } = useCart();
+  const { user } = useAuthContext();
+  const { updateCartItems } = useCartContext();
 
-  const handleQuantityChange = (productId, quantity) => {
+  const navigate = useNavigate();
+
+  const [cartItems, setcartItems] = useState(null);
+
+  const handleQuantityChange = async (productId, quantity) => {
     if (quantity < 1) return;
     if (quantity > 50) return;
-    updateCartQuantity(productId, parseInt(quantity));
+
+    const response = await updateCartItem({
+      id: user?.id,
+      productId,
+      quantity,
+    });
+
+    if (response.success) {
+      setcartItems(response.data.cart);
+    }
   };
 
-  const handleRemove = ({ productId }) => {
-    removeFromCart({ productId });
+  const handleRemove = async ({ productId }) => {
+    const response = await removeCartItem({ id: user.id, productId });
+
+    if (response.success) {
+      toast.success(response?.data.message);
+      getUserCartItems();
+      updateCartItems();
+    } else {
+      toast.error(response?.message);
+    }
   };
+
+  const getUserCartItems = async () => {
+    const response = await getCartItems(user.id);
+
+    if (response.success) {
+      setcartItems(response?.data);
+    }
+  };
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    getUserCartItems();
+  }, []);
 
   return (
     <div className="container w-full m-auto px-5 py-14 space-y-5">
@@ -21,23 +65,27 @@ const Cart = () => {
 
       <div className="flex gap-5 flex-col lg:flex-row">
         <div className="w-full lg:max-w-[800px]">
-          {cart.length > 0 && (
+          {cartItems && (
             <div className="max-h-[600px] overflow-y-auto">
               <ul className="space-y-3">
-                {cart &&
-                  cart?.map((item) => (
-                    <li key={item.productId} className="w-full">
+                {cartItems.orderItems.length > 0 ? (
+                  cartItems?.orderItems.map((orderItem) => (
+                    <li key={orderItem?.product._id} className="w-full">
                       <div className="bg-hover p-5 rounded flex gap-5 flex-col lg:flex-row">
                         <img
-                          src={item.thumbnail}
+                          src={orderItem?.product.thumbnail}
                           className="min-w-32 min-h-32 max-h-32 max-w-32 rounded object-cover self-center lg:self-start"
                         />
                         <div className="flex flex-col gap-3 w-full">
                           <div className="flex flex-col lg:flex-row lg:items-center justify-between w-full gap-5">
-                            <h1 className="text-xl font-bold">{item.name}</h1>
+                            <h1 className="text-xl font-bold">
+                              {orderItem?.product.title}
+                            </h1>
                             <button
                               onClick={() =>
-                                handleRemove({ productId: item.productId })
+                                handleRemove({
+                                  productId: orderItem?.product._id,
+                                })
                               }
                               className="text-red-500 max-w-[122px] active:scale-95 animation hover:bg-gray-950/10 rounded p-1 text-sm flex items-center gap-1"
                             >
@@ -48,7 +96,7 @@ const Cart = () => {
                           <p className="text-lg">
                             Price:{" "}
                             <span className="text-primary font-bold">
-                              Rs {item.price}
+                              Rs {orderItem?.product.price}
                             </span>
                           </p>
 
@@ -57,10 +105,10 @@ const Cart = () => {
                             <input
                               type="number"
                               className="max-w-[80px] text-center p-2 rounded outline-none"
-                              value={item.quantity}
+                              value={orderItem?.quantity}
                               onChange={(e) =>
                                 handleQuantityChange(
-                                  item.productId,
+                                  orderItem?.product._id,
                                   e.target.value
                                 )
                               }
@@ -69,41 +117,54 @@ const Cart = () => {
                         </div>
                       </div>
                     </li>
-                  ))}
+                  ))
+                ) : (
+                  <h1 className="text-center">Oops! Your cart is empty.</h1>
+                )}
               </ul>
             </div>
           )}
         </div>
-        {cart.length > 0 && (
+        {cartItems && (
           <div className="w-full lg:max-w-[450px] rounded bg-hover flex flex-col p-5 gap-2 justify-between">
             <div className="space-y-2">
               <h1 className="font-bold text-xl">Summary</h1>
-              <ul className="space-y-1">
-                {cart.map((item) => (
-                  <li key={item.productId} className="flex justify-between">
-                    <div>
-                      {item.name} - {item.quantity} x Rs{" "}
-                      {item.price.toLocaleString()}
-                    </div>
-                    <p>
-                      Rs. {Number(item.quantity * item.price).toLocaleString()}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              <ul className="space-y-1 flex flex-col gap-5">
+                <div>
+                  {cartItems?.orderItems.map((orderItem) => (
+                    <li
+                      key={orderItem.product?.productId}
+                      className="flex justify-between"
+                    >
+                      <div>
+                        {orderItem.product?.title} - {orderItem?.quantity} x Rs{" "}
+                        {orderItem.product?.price.toLocaleString()}
+                      </div>
+                      <p>
+                        Rs.{" "}
+                        {Number(
+                          orderItem?.quantity * orderItem.product?.price
+                        ).toLocaleString()}
+                      </p>
+                    </li>
+                  ))}
+                </div>
 
-            <div className="flex justify-between items-center text-xl font-bold">
-              <h1>Grand Total</h1>
-              <h1 className="text-primary">Rs. {cartTotal.toLocaleString()}</h1>
+                <div className="flex justify-between items-center text-xl font-bold">
+                  <h1>Grand Total</h1>
+                  <h1 className="text-primary">
+                    Rs. {cartItems?.orderTotal.toLocaleString()}
+                  </h1>
+                </div>
+              </ul>
             </div>
           </div>
         )}
       </div>
 
-      {cart.length < 1 && (
+      {/* {cartItems?.length > 1 && cartItems?.orderItems.length < 1 && (
         <h1 className="text-center">Oops! Your cart is empty.</h1>
-      )}
+      )} */}
     </div>
   );
 };

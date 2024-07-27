@@ -17,6 +17,9 @@ import Customer from "./pages/admin/Customer";
 import Order from "./pages/admin/Order";
 import Products from "./pages/admin/Products";
 import Dashboard from "./pages/admin/Dashboard";
+import Modal from "react-modal";
+
+Modal.setAppElement("#root");
 
 function App() {
   const { user, isLoading } = useAuthContext();
@@ -50,8 +53,8 @@ function App() {
             <Route path="customer" element={<Customer />} />
             <Route path="order" element={<Order />} />
             <Route path="products" element={<Products />} />
-            <Route path="login" element={<AdminLogin />} />
           </Route>
+          <Route path="/admin/login" element={<AdminLogin />} />
         </Routes>
       </BrowserRouter>
     </>

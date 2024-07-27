@@ -2,6 +2,7 @@ import {
   Blinds,
   LayoutDashboard,
   ListOrdered,
+  LogOut,
   SwatchBook,
   Users,
 } from "lucide-react";
@@ -12,9 +13,12 @@ import Button from "./Button";
 const Sidebar = () => {
   const { pathname } = useLocation();
   return (
-    <nav className="sticky left-0 top-0 w-[280px] bg-secondary h-screen p-5 text-white space-y-8 flex flex-col justify-between">
+    <nav className="sticky left-0 top-0 bottom-0 md:w-[280px] bg-secondary h-screen p-5 text-white space-y-8 flex flex-col justify-between shadow">
       <div className="space-y-5 w-full">
-        <Brand />
+        <img src="/3Dots.png" className="size-8 m-auto md:hidden" />
+        <div className="max-md:hidden">
+          <Brand />
+        </div>
         <ul className="space-y-2">
           <li>
             <Link
@@ -24,7 +28,7 @@ const Sidebar = () => {
               }`}
             >
               <LayoutDashboard />
-              Dashboard
+              <p className="max-md:hidden">Dashboard</p>
             </Link>
           </li>
           <li>
@@ -35,7 +39,7 @@ const Sidebar = () => {
               }`}
             >
               <ListOrdered />
-              Orders
+              <p className="max-md:hidden">Orders</p>
             </Link>
           </li>
           <li>
@@ -46,7 +50,7 @@ const Sidebar = () => {
               }`}
             >
               <Blinds />
-              Products
+              <p className="max-md:hidden">Products</p>
             </Link>
           </li>
           <li>
@@ -57,7 +61,7 @@ const Sidebar = () => {
               }`}
             >
               <SwatchBook />
-              Categories
+              <p className="max-md:hidden">Categories</p>
             </Link>
           </li>
 
@@ -69,13 +73,16 @@ const Sidebar = () => {
               }`}
             >
               <Users />
-              Customers
+              <p className="max-md:hidden">Customers</p>
             </Link>
           </li>
         </ul>
       </div>
 
-      <Button>Logout</Button>
+      <Button className="flex items-center justify-center">
+        <LogOut className="md:hidden" />
+        <p className="max-md:hidden">Logout</p>
+      </Button>
     </nav>
   );
 };

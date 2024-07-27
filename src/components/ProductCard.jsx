@@ -1,14 +1,43 @@
-import useCartContext from "../hooks/useCartContext";
+import toast from "react-hot-toast";
+import useAuthContext from "../hooks/useAuthContext";
 import CartIcon from "./CartIcon";
 import { useNavigate } from "react-router-dom";
+import useCart from "../hooks/useCart";
+import useCartContext from "../hooks/useCartContext";
 
 const ProductCard = ({ image, title, desc, price, id }) => {
-  const { addToCart } = useCartContext();
+  const { addToCart } = useCart();
+  const { user } = useAuthContext();
+  const { updateCartItems } = useCartContext();
   const navigate = useNavigate();
+
+  const onAddToCart = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    const products = [
+      {
+        product: id,
+        quantity: 1,
+        itemTotal: price,
+      },
+    ];
+
+    const response = await addToCart({ id: user.id, products });
+
+    if (response.success) {
+      toast.success(response?.data.message);
+      updateCartItems();
+    } else {
+      toast.error(response.message);
+    }
+  };
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    addToCart({ productId: id, name: title, thumbnail: image, price: price });
+    onAddToCart();
   };
 
   return (
