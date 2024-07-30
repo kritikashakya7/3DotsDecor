@@ -5,15 +5,20 @@ import { Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import useCartContext from "../hooks/useCartContext";
+import LoadingScreen from "../components/LoadingScreen";
+import Button from "../components/Button";
+import useCheckoutContext from "../hooks/useCheckoutContext";
 
 const Cart = () => {
   const { getCartItems, updateCartItem, removeCartItem } = useCart();
   const { user } = useAuthContext();
   const { updateCartItems } = useCartContext();
+  const { addCartToCheckout } = useCheckoutContext();
 
   const navigate = useNavigate();
 
   const [cartItems, setcartItems] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleQuantityChange = async (productId, quantity) => {
     if (quantity < 1) return;
@@ -43,11 +48,24 @@ const Cart = () => {
   };
 
   const getUserCartItems = async () => {
-    const response = await getCartItems(user.id);
+    const response = await getCartItems(user?.id);
 
     if (response.success) {
       setcartItems(response?.data);
     }
+
+    setIsLoading(false);
+  };
+
+  const onBuyNow = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    addCartToCheckout();
+
+    navigate("/checkout");
   };
 
   useEffect(() => {
@@ -58,6 +76,10 @@ const Cart = () => {
 
     getUserCartItems();
   }, []);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="container w-full m-auto px-5 py-14 space-y-5">
@@ -149,14 +171,17 @@ const Cart = () => {
                     </li>
                   ))}
                 </div>
-
-                <div className="flex justify-between items-center text-xl font-bold">
-                  <h1>Grand Total</h1>
-                  <h1 className="text-primary">
-                    Rs. {cartItems?.orderTotal.toLocaleString()}
-                  </h1>
-                </div>
               </ul>
+            </div>
+
+            <div className="flex flex-col gap-5">
+              <div className="flex justify-between items-center text-xl font-bold">
+                <h1>Grand Total</h1>
+                <h1 className="text-primary">
+                  Rs. {cartItems?.orderTotal.toLocaleString()}
+                </h1>
+              </div>
+              <Button onClick={onBuyNow}>Buy Now</Button>
             </div>
           </div>
         )}

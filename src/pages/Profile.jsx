@@ -22,16 +22,6 @@ const Profile = () => {
                 Profile
               </button>
             </li>
-            <li>
-              <button
-                className={`p-2 w-full text-left hover:bg-hover rounded animation ${
-                  selectedMenu === "orderHistory" && "bg-hover"
-                }`}
-                onClick={() => setSelectedMenu("orderHistory")}
-              >
-                Order History
-              </button>
-            </li>
           </ul>
           <Button onClick={logout} className={"w-full"}>
             Logout
@@ -47,12 +37,6 @@ const Profile = () => {
               <p>
                 <strong>Email Address:</strong> {user?.email}
               </p>
-            </div>
-          )}
-          {selectedMenu === "orderHistory" && (
-            <div className="space-y-2">
-              <h1 className="text-xl font-bold">Order History</h1>
-              <div className="max-h-[calc(100vh-500px)] overflow-y-auto"></div>
             </div>
           )}
         </div>

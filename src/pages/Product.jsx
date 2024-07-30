@@ -9,11 +9,14 @@ import useAuthContext from "../hooks/useAuthContext";
 import toast from "react-hot-toast";
 import useCart from "../hooks/useCart";
 import useCartContext from "../hooks/useCartContext";
+import useCheckoutContext from "../hooks/useCheckoutContext";
 
 const Product = () => {
   const { user } = useAuthContext();
   const { addToCart } = useCart();
   const { updateCartItems } = useCartContext();
+  const { addProductToCheckout } = useCheckoutContext();
+
   const navigate = useNavigate();
   const { getProductById } = useAdmin();
   const [productInfo, setProductInfo] = useState(null);
@@ -70,6 +73,16 @@ const Product = () => {
       navigate("/login");
       return;
     }
+
+    addProductToCheckout({
+      id: id,
+      quantity: addQuantity,
+      itemTotal: productInfo.price * addQuantity,
+      title: productInfo.title,
+      price: productInfo.price,
+    });
+
+    navigate("/checkout");
   };
 
   useEffect(() => {

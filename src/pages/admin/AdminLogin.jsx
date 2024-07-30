@@ -1,11 +1,31 @@
-import React from "react";
 import { useState } from "react";
 import Button from "../../components/Button";
+import { useNavigate } from "react-router-dom";
+import useAuthContext from "../../hooks/useAuthContext";
+import { useAuth } from "../../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const AdminLogin = () => {
+  const { login } = useAuth();
+  const { loginUser } = useAuthContext();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const onLogin = () => {};
+
+  const onLogin = async () => {
+    const response = await login({ email, password });
+
+    if (response.succes) {
+      toast.success(response.data.message);
+      const token = response.data.token;
+      loginUser(token);
+      navigate("/");
+    } else {
+      toast.error(response.error.message);
+    }
+  };
+
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="login-container">

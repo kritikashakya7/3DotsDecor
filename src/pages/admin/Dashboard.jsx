@@ -1,15 +1,16 @@
 import { ListOrdered, ShoppingBasket, SwatchBook, User } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import useAdmin from "../../hooks/useAdmin";
+import { format } from "date-fns";
 
 const Dashboard = () => {
-  const { dashboardCounts } = useAdmin();
+  const { dashboardCounts, getRecentCompletedOrders } = useAdmin();
 
   const [customerCount, setCustomerCount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);
   const [catgoryCount, setCatgoryCount] = useState(0);
   const [productCount, setProductCount] = useState(0);
+  const [recentTransactions, setRecentTransactions] = useState([]);
 
   const fetchCounts = async () => {
     const response = await dashboardCounts();
@@ -24,8 +25,17 @@ const Dashboard = () => {
     }
   };
 
+  const fetchRecentTransactions = async () => {
+    const response = await getRecentCompletedOrders();
+
+    if (response.success) {
+      setRecentTransactions(response?.data);
+    }
+  };
+
   useEffect(() => {
     fetchCounts();
+    fetchRecentTransactions();
   }, []);
 
   return (
@@ -77,38 +87,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div className="flex justify-between items-center">
-          <h1 className="text-xl font-bold">Recent Orders</h1>
-          <Link to="/admin/order" className="underline text-primary">
-            View All
-          </Link>
-        </div>
-
-        <table className="table-auto w-full shadow">
-          <thead>
-            <tr>
-              <th className="px-3 py-2 w-[100px]">Order ID</th>
-              <th className="px-3 py-2">Customer Name</th>
-              <th className="px-3 py-2">Order Date</th>
-              <th className="px-3 py-2">Total</th>
-              <th className="px-3 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="overflow-x-auto">
-            <tr className="text-center">
-              <td className="px-3 py-4">1</td>
-              <td className="px-3 py-4">Gaurang Kansakar</td>
-              <td className="px-3 py-4">20 July 2024</td>
-              <td className="px-3 py-4">Rs. 2,400</td>
-              <td className="px-3 py-4">
-                <button className="underline text-primary">View Details</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
       <div className="flex max-lg:flex-col gap-8">
         <div className="flex-1 space-y-3">
           <h1 className="text-xl font-bold">Recent Transactions</h1>
@@ -120,21 +98,25 @@ const Dashboard = () => {
                   <th className="px-3 py-2">Customer Name</th>
                   <th className="px-3 py-2">Order Date</th>
                   <th className="px-3 py-2">Total</th>
-                  <th className="px-3 py-2">Actions</th>
+                  <th className="px-3 py-2">Status</th>
                 </tr>
               </thead>
               <tbody className="overflow-x-auto">
-                <tr className="text-center">
-                  <td className="px-3 py-4">1</td>
-                  <td className="px-3 py-4">Gaurang Kansakar</td>
-                  <td className="px-3 py-4">20 July 2024</td>
-                  <td className="px-3 py-4">Rs. 2,400</td>
-                  <td className="px-3 py-4">
-                    <button className="underline text-primary">
-                      View Details
-                    </button>
-                  </td>
-                </tr>
+                {recentTransactions.map((item) => (
+                  <tr key={item?._id} className="text-center">
+                    <td className="px-3 py-4">{item._id}</td>
+                    <td className="px-3 py-4">
+                      {item?.customer?.firstName} {item?.customer?.lastname}
+                    </td>
+                    <td className="px-3 py-4">
+                      {format(item?.createdAt, "dd-MM-yyyy")}
+                    </td>
+                    <td className="px-3 py-4">
+                      Rs. {item?.orderTotal.toLocaleString()}
+                    </td>
+                    <td className="px-3 py-4">{item?.status}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

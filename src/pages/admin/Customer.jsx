@@ -54,28 +54,31 @@ const Customer = () => {
           <br />
 
           <tbody>
-            {customers.map((customer) => (
-              <>
-                <tr key={customer?._id}>
-                  <td>{customer?._id}</td>
-                  <td className="capitalize">
-                    {customer?.firstName} {customer?.lastName}
-                  </td>
-                  <td>{customer?.email}</td>
-                  <td>
-                    <Button
-                      className="flex items-center gap-2"
-                      onClick={() => onDeleteCustomer(customer?._id)}
-                      disabled={isSubmitting}
-                    >
-                      <Trash />
-                      Delete
-                    </Button>
-                  </td>
-                </tr>
-                <br />
-              </>
-            ))}
+            {customers.map(
+              (customer) =>
+                customer.role !== "admin" && (
+                  <>
+                    <tr key={customer?._id}>
+                      <td>{customer?._id}</td>
+                      <td className="capitalize">
+                        {customer?.firstName} {customer?.lastName}
+                      </td>
+                      <td>{customer?.email}</td>
+                      <td>
+                        <Button
+                          className="flex items-center gap-2"
+                          onClick={() => onDeleteCustomer(customer?._id)}
+                          disabled={isSubmitting}
+                        >
+                          <Trash />
+                          Delete
+                        </Button>
+                      </td>
+                    </tr>
+                    <br />
+                  </>
+                )
+            )}
           </tbody>
         </table>
       </div>

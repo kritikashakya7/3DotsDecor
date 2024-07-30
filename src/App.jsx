@@ -18,6 +18,9 @@ import Order from "./pages/admin/Order";
 import Products from "./pages/admin/Products";
 import Dashboard from "./pages/admin/Dashboard";
 import Modal from "react-modal";
+import Checkout from "./pages/Checkout";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentFail from "./pages/PaymentFail";
 
 Modal.setAppElement("#root");
 
@@ -27,13 +30,33 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout />}>
+          <Route
+            path="/"
+            element={
+              user?.role !== "admin" ? <Layout /> : <Navigate to="/admin" />
+            }
+          >
             <Route index element={<Home />} />
             <Route path="aboutus" element={<Aboutus />} />
             <Route path="Customize" element={<Customize />} />
             <Route path="shop" element={<Shop />} />
             <Route path="product/:id" element={<Product />} />
-            <Route path="cart" element={<Cart />} />
+            <Route
+              path="checkout"
+              element={user ? <Checkout /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="payment-success"
+              element={user ? <PaymentSuccess /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="payment-fail"
+              element={user ? <PaymentFail /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="cart"
+              element={user ? <Cart /> : <Navigate to="/login" />}
+            />
             <Route
               path="profile"
               element={user ? <Profile /> : <Navigate to="/login" />}
@@ -47,14 +70,30 @@ function App() {
               element={!user && !isLoading ? <Login /> : <Navigate to="/" />}
             />
           </Route>
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route
+            path="/admin"
+            element={
+              !user && !isLoading ? (
+                <Navigate to="/admin/login" />
+              ) : user?.role !== "admin" ? (
+                <Navigate to="/" />
+              ) : (
+                <AdminLayout />
+              )
+            }
+          >
             <Route index element={<Dashboard />} />
             <Route path="category" element={<Category />} />
             <Route path="customer" element={<Customer />} />
             <Route path="order" element={<Order />} />
             <Route path="products" element={<Products />} />
           </Route>
-          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route
+            path="/admin/login"
+            element={
+              !user && !isLoading ? <AdminLogin /> : <Navigate to="/admin" />
+            }
+          />
         </Routes>
       </BrowserRouter>
     </>

@@ -5,6 +5,7 @@ import productRoute from "./routes/productRoute.js";
 import categoryRoute from "./routes/categoryRoute.js";
 import userRoute from "./routes/userRoute.js";
 import cartRoute from "./routes/cartRoute.js";
+import orderRoute from "./routes/orderRoute.js";
 import cors from "cors";
 import { connectDb } from "./dbconfig.js";
 import { v2 as cloudinary } from "cloudinary";
@@ -32,6 +33,7 @@ app.use("/api/category", categoryRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/customer", userRoute);
 app.use("/api/cart", cartRoute);
+app.use("/api/order", orderRoute);
 
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`);

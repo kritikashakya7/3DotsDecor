@@ -9,9 +9,11 @@ import {
 import Brand from "./Brand";
 import { Link, useLocation } from "react-router-dom";
 import Button from "./Button";
+import useAuthContext from "../hooks/useAuthContext";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
+  const { logout } = useAuthContext();
   return (
     <nav className="sticky left-0 top-0 bottom-0 md:w-[280px] bg-secondary h-screen p-5 text-white space-y-8 flex flex-col justify-between shadow">
       <div className="space-y-5 w-full">
@@ -79,7 +81,7 @@ const Sidebar = () => {
         </ul>
       </div>
 
-      <Button className="flex items-center justify-center">
+      <Button className="flex items-center justify-center" onClick={logout}>
         <LogOut className="md:hidden" />
         <p className="max-md:hidden">Logout</p>
       </Button>

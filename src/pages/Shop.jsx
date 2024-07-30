@@ -9,10 +9,12 @@ const Shop = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [currentFilter, setCurrentFilter] = useState("");
+
   const { getAllProducts } = useAdmin();
 
   const fetchProducts = async () => {
-    const response = await getAllProducts();
+    const response = await getAllProducts(currentFilter);
 
     if (response.success) {
       setProducts(response.data);
@@ -21,9 +23,13 @@ const Shop = () => {
     setIsLoading(false);
   };
 
+  const updateQueryParams = (query) => {
+    setCurrentFilter(query);
+  };
+
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [currentFilter]);
 
   return (
     <div className="container m-auto w-full px-5 py-14">
@@ -35,10 +41,13 @@ const Shop = () => {
           {products.length > 0 ? (
             <>
               <div className="flex md:flex-row flex-col gap-5 items-center justify-center mb-12">
-                <select className="outline-none p-2 bg-hover rounded">
+                <select
+                  className="outline-none p-2 bg-hover rounded"
+                  onChange={(e) => updateQueryParams(e.currentTarget.value)}
+                >
                   <option>Filter</option>
-                  <option value="high">Price - High to Low</option>
-                  <option value="low">Price - Low to High</option>
+                  <option value="high-to-low">Price - High to Low</option>
+                  <option value="low-to-high">Price - Low to High</option>
                 </select>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-3 gap-y-8 justify-items-center my-5">

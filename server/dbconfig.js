@@ -5,6 +5,8 @@ dotenv.config();
 
 export const connectDb = async () => {
   try {
+    // mongoose.set("strictQuery", true);
+
     await mongoose.connect(process.env.MONGO_URL);
 
     console.log("Connected to Datbase Successfully.");

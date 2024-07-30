@@ -1,13 +1,16 @@
 import Brand from "../components/Brand";
-import "../css/aboutus.css";
+import img from "../assets/3dot.png";
 
 export const Aboutus = () => {
   return (
-    <div className="aboutus-container container py-10">
-      <div className="content-container max-md:flex-col">
-        <div className="column">
-          <img src="/3dotsabtus.jpg" className="aboutus-image" alt="About Us" />
-        </div>
+    <div className="aboutus-container container py-10 max-lg:p-5">
+      <div className="content-container flex max-md:flex-col gap-6 max-md:items-center">
+        <img
+          src={img}
+          className="max-w-[400px] aspect-auto rounded-md object-cover"
+          alt="About Us"
+        />
+
         <div className="column space-y-2">
           <p className="text-justify font-bold text-xl flex gap-2">
             At <Brand />

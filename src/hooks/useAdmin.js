@@ -2,9 +2,17 @@ import axios from "axios";
 import { API_BASE_URL } from "../lib/constants";
 
 const useAdmin = () => {
-  const getAllProducts = async () => {
+  const getAllProducts = async (query) => {
+    console.log("🚀 ~ query:", query);
+
     try {
-      const response = await axios.get(`${API_BASE_URL}/products`);
+      let reqUrl;
+      if (query) {
+        reqUrl = `${API_BASE_URL}/products?filter=${query}`;
+      } else {
+        reqUrl = `${API_BASE_URL}/products`;
+      }
+      const response = await axios.get(reqUrl);
 
       const data = response?.data.products;
 
@@ -278,9 +286,9 @@ const useAdmin = () => {
 
   const getAllOrders = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/orders`);
+      const response = await axios.get(`${API_BASE_URL}/order`);
 
-      const data = response?.data;
+      const data = response?.data.orders;
 
       return {
         success: true,
@@ -291,6 +299,25 @@ const useAdmin = () => {
       return {
         success: false,
         message: error.response?.data.error,
+      };
+    }
+  };
+
+  const getRecentCompletedOrders = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/order/recent`);
+
+      const data = response?.data.orders;
+
+      return {
+        success: true,
+        data,
+      };
+    } catch (error) {
+      console.log("🚀 ~ error:", error);
+      return {
+        success: false,
+        message: error.response?.data.message,
       };
     }
   };
@@ -309,6 +336,7 @@ const useAdmin = () => {
     getAllCustomer,
     deleteCustomer,
     getAllOrders,
+    getRecentCompletedOrders,
   };
 };
 

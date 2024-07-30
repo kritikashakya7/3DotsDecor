@@ -1,7 +1,9 @@
-import Product from "../models/Products.js";
-import Category from "../models/Category.js";
 import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
+import Category from "../models/Category.js";
+import Order from "../models/Orders.js";
+import Product from "../models/Products.js";
+
 export const addProduct = async (req, res) => {
   try {
     const { title, price, category, description, thumbnail, stock } = req.body;
@@ -115,9 +117,33 @@ export const deleteProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
+    const { filter } = req.query;
 
-    return res.status(200).json({ products });
+    if (!filter) {
+      const products = await Product.find().sort({ createdAt: -1 });
+      return res.status(200).json({ products });
+    } else {
+      if (filter !== "high-to-low" && filter !== "low-to-high")
+        return res.status(400).json({ message: "Invalid filter method." });
+
+      let products = [];
+
+      switch (filter) {
+        case "high-to-low":
+          products = await Product.find().sort({ price: -1 });
+          break;
+
+        case "low-to-high":
+          products = await Product.find().sort({ price: 1 });
+          break;
+
+        default:
+          products = await Product.find().sort({ price: 1 });
+          break;
+      }
+
+      return res.status(200).json({ products });
+    }
   } catch (error) {
     console.log("🚀 ~ error:", error);
     res.status(500).json("Internal server error. Try again later.");
@@ -141,18 +167,102 @@ export const getProductById = async (req, res) => {
   }
 };
 
-export const searchProduct = async (req, res) => {
+export const getProductsByCategory = async (req, res) => {
   try {
-    const { query } = req.query;
+    const { id } = req.params;
 
-    // Case-insensitive search for products
-    const products = await Product.find({
-      title: { $regex: query, $options: "i" },
-    });
+    if (!id) return res.status(400).json({ message: "Invalid request." });
 
-    res.status(200).json({ products });
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid category ID." });
+    }
+
+    const products = await Product.find({ categoryId: id });
+
+    return res.status(200).json({ products });
   } catch (error) {
     console.log("🚀 ~ error:", error);
-    res.status(500).json("Internal server error. Try again later.");
+    return res
+      .status(500)
+      .json({ message: "Internal server error. Try again later." });
+  }
+};
+
+export const getTopSoldProducts = async (req, res) => {
+  try {
+    const { number } = req.params;
+    const topProducts = await Order.aggregate([
+      {
+        $match: { status: "Completed" },
+      },
+      // Get the products array
+      { $unwind: "$products" },
+
+      // Group by productId and sum the quantities
+      {
+        $group: {
+          _id: "$products.productId",
+          totalSold: { $sum: "$products.quantity" },
+        },
+      },
+
+      // Sort by totalSold in descending order
+      { $sort: { totalSold: -1 } },
+
+      // Limit to top 4 products
+      { $limit: Number(number) },
+
+      // Lookup product details
+      {
+        $lookup: {
+          from: "products",
+          localField: "_id",
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+
+      // Get the productDetails array
+      { $unwind: "$productDetails" },
+    ]);
+
+    return res.status(200).json({ topProducts });
+  } catch (error) {
+    console.log("🚀 ~ error:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error. Try again later." });
+  }
+};
+
+export const filterProducts = async (req, res) => {
+  try {
+    const { filter } = req.query;
+
+    if (filter !== "high-to-low" || filter !== "low-to-high")
+      return res.status(400).json({ message: "Invalid filter method." });
+
+    let products = [];
+
+    switch (filter) {
+      case "high-to-low":
+        products = await Product.find().sort({ price: -1 });
+        break;
+
+      case "low-to-high":
+        products = await Product.find().sort({ price: 1 });
+        break;
+
+      default:
+        products = await Product.find().sort({ price: 1 });
+        break;
+    }
+
+    return res.status(200).json({ products });
+  } catch (error) {
+    console.log("🚀 ~ error:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error. Try again later." });
   }
 };
